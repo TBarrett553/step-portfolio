@@ -15,14 +15,14 @@
 /**
  * Adds a random greeting to the page.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function addDonation() {
+  const donations =
+      ['Florida Justice League', 'Louisville Bail Fund', 'Austin Justice Coalition', 'Black Lives Matter', 'Google Give'];
 
   // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  const donation = greetings[Math.floor(Math.random() * donations.length)];
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  const donationContainer = document.getElementById('donate-container');
+  donationContainer.innerText = donation;
 }
