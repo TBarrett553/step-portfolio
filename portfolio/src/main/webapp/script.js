@@ -17,10 +17,13 @@
  */
 function addDonation() {
   const donations =
-      ['Florida Justice League', 'Louisville Bail Fund', 'Austin Justice Coalition', 'Black Lives Matter', 'Google Give'];
+      ['Florida Justice Center: https://www.floridajc.org/', 
+      'Louisville Community Bail Fund: https://actionnetwork.org/fundraising/louisville-community-bail-fund/', 
+      'Austin Justice Coalition: https://austinjustice.org/', 'Black Lives Matter: https://blacklivesmatters.carrd.co/', 
+      'Google Give: https://google.benevity.org/campaigns/1643', 'Black Visions Collective: https://www.blackvisionsmn.org/'];
 
   // Pick a random greeting.
-  const donation = greetings[Math.floor(Math.random() * donations.length)];
+  const donation = donations[Math.floor(Math.random() * donations.length)];
 
   // Add it to the page.
   const donationContainer = document.getElementById('donate-container');
