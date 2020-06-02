@@ -17,15 +17,15 @@
  */
 function addDonation() {
   const donations =
-      ['Florida Justice Center: https://www.floridajc.org/', 
-      'Louisville Community Bail Fund: https://actionnetwork.org/fundraising/louisville-community-bail-fund/', 
-      'Austin Justice Coalition: https://austinjustice.org/', 'Black Lives Matter: https://blacklivesmatters.carrd.co/', 
-      'Google Give: https://google.benevity.org/campaigns/1643', 'Black Visions Collective: https://www.blackvisionsmn.org/'];
+      ['<a href="https://www.floridajc.org/">Florida Justice Center</a>', 
+      '<a href="https://actionnetwork.org/fundraising/louisville-community-bail-fund/">Louisville Community Bail Fund</a>', 
+      '<a href="https://austinjustice.org/">Austin Justice Coalition</a>', '<a href="https://blacklivesmatters.carrd.co/">Black Lives Matter</a>', 
+      '<a href="https://google.benevity.org/campaigns/1643">Google Give</a>', '<a href=""https://www.blackvisionsmn.org/">Black Visions Collective</a>'];
 
   // Pick a random greeting.
   const donation = donations[Math.floor(Math.random() * donations.length)];
 
   // Add it to the page.
   const donationContainer = document.getElementById('donate-container');
-  donationContainer.innerText = donation;
+  donationContainer.innerHTML = donation;
 }
