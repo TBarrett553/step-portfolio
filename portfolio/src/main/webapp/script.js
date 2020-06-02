@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * Adds a randomized donation link to the page.
+ * Adds a randomized donation link to the guest book portion.
  */
 function addDonation() {
   const donations =[
