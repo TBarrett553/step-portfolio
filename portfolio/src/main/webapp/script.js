@@ -13,16 +13,22 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Adds a randomized donation link to the guest book portion.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function addDonation() {
+  const donations =[
+        '<a href="https://www.floridajc.org/">Florida Justice Center</a>', 
+        '<a href="https://actionnetwork.org/fundraising/louisville-community-bail-fund/">Louisville Community Bail Fund</a>', 
+        '<a href="https://austinjustice.org/">Austin Justice Coalition</a>',
+        '<a href="https://blacklivesmatters.carrd.co/">Black Lives Matter</a>', 
+        '<a href="https://google.benevity.org/campaigns/1643">Google Give</a>', 
+        '<a href=""https://www.blackvisionsmn.org/">Black Visions Collective</a>'
+    ];
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  // Pick a random donation link.
+  const donation = donations[Math.floor(Math.random() * donations.length)];
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  const donationContainer = document.getElementById('donate-container');
+  donationContainer.innerHTML = donation;
 }

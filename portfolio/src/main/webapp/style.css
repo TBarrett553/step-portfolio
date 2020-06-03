@@ -1,9 +1,88 @@
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+#home {
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    text-align: center;
+    background-color: #13AA84;
 }
 
-#greeting-container {
-  margin-top: 20px;
+#donate-container {
+    margin-top: 20px;
+    background-color: gainsboro;
+    width: 100%;
+    text-align: center;
+    font-size-adjust: 2.00;
+}
+
+.first-layer{
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    text-align: center;
+    background-color: #16C196;
+}
+
+.second-layer{
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    text-align: center;
+    background-color: #17D1A2;
+}
+
+.third-layer{
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    text-align: center;
+    background-color: #18E7B3;
+}
+
+#guest-book{
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    text-align: center;
+    background-color: #626C69;
+}
+
+input[type=text]{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+ }
+
+input[type=text]:focus {
+    background-color:#FFDA84;
+}
+
+ol, ul {
+    text-align: left;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+.third-layer .gallery {
+    margin: 20px;
+    border: 1px solid #13AA84;
+    float: left;
+    width: 200px;
+}
+.third-layer .gallery img {
+    width: 100%;
+    height: auto;
+}
+
+p {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.buffer {
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    text-align: center;
+    background-color: #18E7B3;
 }
