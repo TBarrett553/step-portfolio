@@ -13,7 +13,13 @@
     text-align: center;
     font-size-adjust: 2.00;
 }
-
+#greeting-container {
+    margin-top: 20px;
+    background-color: gainsboro;
+    width: 100%;
+    text-align: center;
+    font-size-adjust: 2.00;
+}
 .first-layer{
     margin-left: auto;
     margin-right: auto;
