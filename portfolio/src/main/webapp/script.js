@@ -32,6 +32,7 @@ function addDonation() {
   const donationContainer = document.getElementById('donate-container');
   donationContainer.innerHTML = donation;
 }
+
 function getHello() {
   console.log('Fetching the greeting');
 
@@ -67,7 +68,14 @@ function addGreetingToDom(greeting) {
 }
 
 function getHelloArrow() {
-  fetch('/data').then(response => response.text()).then((quote) => {
-    document.getElementById('greeting-container').innerText = quote;
+  fetch('/data').then(response => response.json()).then((mymessages) => {
+    const greeting= mymessages[Math.floor(Math.random() * mymessages.length)];
+
+    greetings = document.getElementById('greeting-container');
+    greetings.innerText = greeting;
+
+    console.log(mymessages[0]);
+    console.log(mymessages[1]);
+    console.log(mymessages[2]);
   });
 }
