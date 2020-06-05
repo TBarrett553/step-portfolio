@@ -16,7 +16,7 @@ package com.google.sps.servlets;
 
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,18 +26,20 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+    private Hashtable<String,String>  messages= new Hashtable<String, String>();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String greeting = "<h1>Hello Teanna!</h1>";
     
     //The Arraylist is ideal because it can be changed after it is declared
 
-        ArrayList<String> messages = new ArrayList<String>();
+        /**ArrayList<String>  messages= new ArrayList<String>();
         messages.add("Hi there, I hope you are having a good day!");
         messages.add("Hello, find something fun to do today!");
         messages.add("Greetings! You will do great things today!");
+        messages.add("Hello Teanna!");*/
 
-
+    
     //Convert the string messages into JSON
         String json = convertToJsonUsingGson(messages);
 
@@ -47,10 +49,20 @@ public class DataServlet extends HttpServlet {
 
     }
 
-    private String convertToJsonUsingGson(ArrayList<String> messages){
+    private String convertToJsonUsingGson(Hashtable<String,String> messages){
         Gson gson = new Gson();
         String json = gson.toJson(messages);
         return json;
   }
 
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        
+        String userName = request.getParameter("name");
+        String userComment = request.getParameter("comment");
+
+        messages.put(userName, userComment);
+
+        //response.setContentType("text/html");
+        response.sendRedirect("/index.html");
+  }
 }

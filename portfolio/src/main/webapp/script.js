@@ -79,3 +79,10 @@ function getHelloArrow() {
     console.log(mymessages[2]);
   });
 }
+
+function getUserComment() {
+    fetch('/data').then(response => response.json()).then((messages) =>{
+        console.log("It works");
+        console.log(messages);
+    });
+}

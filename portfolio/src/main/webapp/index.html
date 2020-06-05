@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getUserComment()">
     <div class='buffer'>
         <h1>Say Hello</h1>
         <p>Click here to get a Hello</p>
-        <button onclick="getHelloArrow()">Get a Greeting</button>
+        <button>Get a Greeting</button>
         <div id="greeting-container"></div>
     </div>  
     <div id="home">
@@ -372,7 +372,7 @@
             or recommendations about this web app’s user experience. Then hit return 
             to start all over again!
         </p>
-        <form action="/comments.php" mmengtmethod="post">
+        <form action="/data" method="post">
             <label for="name">Type name below (optional):</label><br>
             <input type='text' id='name' name='name'><br>
             <label for="comment">Type comment below:</label><br>
