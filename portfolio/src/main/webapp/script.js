@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
 /**
  * Adds a randomized donation link to the guest book portion.
  */
@@ -57,4 +60,26 @@ function deleteComments() {
     fetch(request).then(response => response.json()).then(delmessages => {
         console.log("messages gone")
     });
+}
+
+/** Creates a chart and adds it to the page. */
+function drawChart() {
+  const data = new google.visualization.DataTable();
+  data.addColumn('string', 'Result');
+  data.addColumn('number', 'Percent');
+        data.addRows([
+          ['No Charges', 347],
+          ['Charged', 3],
+          ['Convicted', 1]
+        ]);
+
+  const options = {
+    'title': 'U.S. Police Accountability (2013-2019)',
+    'width':500,
+    'height':400
+  };
+
+  const chart = new google.visualization.PieChart(
+      document.getElementById('chart-container'));
+  chart.draw(data, options);
 }

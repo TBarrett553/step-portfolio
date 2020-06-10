@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script.js"></script>
   </head>
   <body onload=getUserComments()> 
@@ -357,8 +358,13 @@
         <img src="Images/profile-drawing.jpg" alt="A very accurate drawing of me" style="width:50%;height=auto;">
         <p>That’s all folks! Feel free to leave your name and short comments, questions, 
             or recommendations about this web app’s user experience. Then hit return 
-            to start all over again!
+            to start all over again! Most importantly, please check out the donation 
+            links below and consider donating!!
         </p>
+        <h2>Why We Need to Donate</h2>
+        <div id="chart-container"></div>
+        <a href="https://mappingpoliceviolence.org/">For more data...</a>
+        <br>
         <button onclick=addDonation()>Donate and Support!</button>
         <br>
         <div id="donate-container"></div>
@@ -374,7 +380,8 @@
             <input type="text" id="comment" name="comment" required><br>
             <input type="submit" value="Post my comment!">
         </form>
-        <div id="comment-container"></div><br>
+        <div id="comment-container"></div>
+        <br>
     </div>
     
   </body>
