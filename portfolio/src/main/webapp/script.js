@@ -33,56 +33,28 @@ function addDonation() {
   donationContainer.innerHTML = donation;
 }
 
-function getHello() {
-  console.log('Fetching the greeting');
+function getUserComments() {
+    //Gets the user comments stored in datastore but I need help with this
+    fetch('/data?quantity=5').then(response => response.json()).then((messages) => {
+        
+        //This message appears so the data was fetched
+        console.log(messages.length);
 
-  // The fetch() function returns a Promise because the request is asynchronous.
-  const responsePromise = fetch('/data');
+        //I'm not sure how to display the comments.
+        comments = document.getElementById('comment-container');
+        var comments_display = "";
 
-  // When the request is complete, pass the response into handleResponse().
-  responsePromise.then(handleResponse);
+        var counter;
+        for (counter = 0; counter < messages.length; counter++){
+            comments_display += messages[counter] + "<br>";    
+        }
+        comments.innerHTML = comments_display;
+    });
 }
 
-/**
- * Handles response by converting it to text and passing the result to
- * addQuoteToDom().
- */
-function handleResponse(response) {
-  console.log('Handling the response.');
-
-  // response.text() returns a Promise, because the response is a stream of
-  // content and not a simple variable.
-  const textPromise = response.text();
-
-  // When the response is converted to text, pass the result into the
-  // addQuoteToDom() function.
-  textPromise.then(addGreetingToDom);
-}
-
-/** Adds a random quote to the DOM. */
-function addGreetingToDom(greeting) {
-  console.log('Adding greeting to dom: ');
-
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerHTML = greeting;
-}
-
-function getHelloArrow() {
-  fetch('/data').then(response => response.json()).then((mymessages) => {
-    const greeting= mymessages[Math.floor(Math.random() * mymessages.length)];
-
-    greetings = document.getElementById('greeting-container');
-    greetings.innerText = greeting;
-
-    console.log(mymessages[0]);
-    console.log(mymessages[1]);
-    console.log(mymessages[2]);
-  });
-}
-
-function getUserComment() {
-    fetch('/data').then(response => response.json()).then((messages) =>{
-        console.log("It works");
-        console.log(messages);
+function deleteComments() {
+    const request = new Request('/delete-data');
+    fetch(request).then(response => response.json()).then(delmessages => {
+        console.log("messages gone")
     });
 }

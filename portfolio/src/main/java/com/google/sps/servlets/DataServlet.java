@@ -14,34 +14,46 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.*;
+import java.lang.Integer;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns some example content. TODO: modify this file to handle comments data. I have to redo everything from step 5*/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    private Hashtable<String,String>  messages= new Hashtable<String, String>();
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
-    //The Arraylist is ideal because it can be changed after it is declared
+        Integer num_req = Integer.parseInt(request.getParameter("quantity"));
 
-        /**ArrayList<String>  messages= new ArrayList<String>();
-        messages.add("Hi there, I hope you are having a good day!");
-        messages.add("Hello, find something fun to do today!");
-        messages.add("Greetings! You will do great things today!");
-        messages.add("Hello Teanna!");*/
+        Query query = new Query("Comment");
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
 
-    
+        ArrayList<String> storedmessages = new ArrayList<String>();
+        for (Entity entity : results.asIterable()) {
+            String userComment = (String) entity.getProperty("comment");
+            
+            if(storedmessages.size() < num_req){
+                storedmessages.add(userComment);
+            }
+            else {
+                break;
+            }
+        }
     //Convert the string messages into JSON
-        String json = convertToJsonUsingGson(messages);
+        String json = convertToJsonUsingGson(storedmessages);
 
     //This is very important because it sends the messages to the client
         response.setContentType("application/json;");
@@ -49,20 +61,31 @@ public class DataServlet extends HttpServlet {
 
     }
 
-    private String convertToJsonUsingGson(Hashtable<String,String> messages){
+    private String convertToJsonUsingGson(ArrayList<String> data){
         Gson gson = new Gson();
-        String json = gson.toJson(messages);
+        String json = gson.toJson(data);
         return json;
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
+        //Get the user input from the comment form
         String userName = request.getParameter("name");
         String userComment = request.getParameter("comment");
 
+        //Place in temporary hashtable
+        Hashtable<String,String>  messages = new Hashtable<String, String>();
         messages.put(userName, userComment);
 
-        //response.setContentType("text/html");
+        //Defines datastore variables that are connected to user input
+        Entity commentEntity = new Entity("Comment");
+        commentEntity.setProperty("name", userName);
+        commentEntity.setProperty("comment", userComment);
+
+        //Adds the data to the permanent datastore
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(commentEntity);
+
+        //Brings the user back to the home page
         response.sendRedirect("/index.html");
   }
 }
