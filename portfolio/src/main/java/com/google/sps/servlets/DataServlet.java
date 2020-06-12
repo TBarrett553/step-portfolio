@@ -35,22 +35,17 @@ public class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer num_req = Integer.parseInt(request.getParameter("quantity"));
+        Integer quantity = Integer.parseInt(request.getParameter("quantity"));
 
         Query query = new Query("Comment");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
         ArrayList<String> storedmessages = new ArrayList<String>();
-        for (Entity entity : results.asIterable()) {
+        for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(quantity))) {
             String userComment = (String) entity.getProperty("comment");
             
-            if(storedmessages.size() < num_req){
-                storedmessages.add(userComment);
-            }
-            else {
-                break;
-            }
+            storedmessages.add(userComment);
         }
     //Convert the string messages into JSON
         String json = convertToJsonUsingGson(storedmessages);
