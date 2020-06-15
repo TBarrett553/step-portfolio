@@ -52,7 +52,6 @@ public class DataServlet extends HttpServlet {
         ArrayList<String> storedmessages = new ArrayList<String>();
         for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(quantity))) {
             String userComment = (String) entity.getProperty("comment");
-
             storedmessages.add(userComment);
         }
 
