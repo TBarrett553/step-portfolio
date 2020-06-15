@@ -61,14 +61,14 @@ function getUserComments() {
 
 /**Delete the comments displayed from the datastore and UI*/
 function deleteComments() {
-    const request = new Request('/delete-data');
+    var quantity = document.getElementById('quantity');
+    var limit = quantity.value;
 
+    const request = new Request('/delete-data?quantity=' + limit);
     comments = document.getElementById('comment-container');
 
-    fetch(request).then(response => response.json()).then(delmessages => {
-        console.log("messages gone")
-        comments.innerHTML = "";
-    });
+    comments.innerHTML = "";
+    console.log("messages gone")
 }
 
 /** Creates a chart and adds it to the page. */

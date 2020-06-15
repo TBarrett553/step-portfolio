@@ -17,10 +17,15 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.gson.Gson;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,14 +36,36 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DeleteServlet extends HttpServlet {
 
-    private Entity commentEntity;
-    private KeyFactory keyFactory;
-    private Key commentKey;
-    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (request.getParameter("quantity") == null) {
+            Integer quantity = 5;
+        }
+
+        Query query = new Query("Comment");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(commentEntity);
-        datastore.delete(commentKey);
+        PreparedQuery results = datastore.prepare(query);
+        Integer quantity = Integer.parseInt(request.getParameter("quantity"));
+
+        ArrayList<String> delmessages = new ArrayList<String>();
+        for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(quantity))) {
+            long id = Long.parseLong(request.getParameter("id"));
+            Key commentEntityKey = KeyFactory.createKey("Task", id);
+            /**String comment = (String) entity.getProperty("comment");
+            delmessages.add(comment);*/
+            datastore.delete(commentEntityKey);
+        }
+
+        String json = convertToJsonUsingGson(delmessages);
+
+    //This is very important because it sends the messages to the client
+        response.setContentType("application/json;");
+        response.getWriter().println(json);
+    }
+
+    private String convertToJsonUsingGson(ArrayList<String> data){
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        return json;
     }
 }

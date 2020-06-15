@@ -7,7 +7,7 @@
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script.js"></script>
   </head>
-  <body onload=getUserComments()> 
+  <body onload="getUserComments()"> 
     <div id="home">
         <a id="home">
             <h1>Teanna Barrett’s Portfolio</h1>
@@ -361,6 +361,10 @@
             to start all over again! Most importantly, please check out the donation 
             links below and consider donating!!
         </p>
+        <a href="#home">
+            <button>Try Again</button>
+        </a>
+        <br>
         <h2>Why We Need to Donate</h2>
         <div id="chart-container"></div>
         <a href="https://mappingpoliceviolence.org/">For more data...</a>
@@ -368,10 +372,6 @@
         <button onclick=addDonation()>Donate and Support!</button>
         <br>
         <div id="donate-container"></div>
-        <br>
-        <a href="#home">
-            <button>Try Again</button>
-        </a>
         <br>
         <h2>Comment Section</h2>
         <form method="post" action="/data">
@@ -389,8 +389,10 @@
             <input type="text" id="comment" name="comment">
             <br>
             <input type="submit" value="Post my comment!">
+            <br>
         </form>
         <div id="comment-container"></div>
+        <button onclick="deleteComments()">Clear Comments</button>
         <br>
     </div>
     
