@@ -47,10 +47,11 @@ public class DataServlet extends HttpServlet {
             
             storedmessages.add(userComment);
         }
-    //Convert the string messages into JSON
+        
+    // Convert the string messages into JSON
         String json = convertToJsonUsingGson(storedmessages);
 
-    //This is very important because it sends the messages to the client
+    // This is very important because it sends the messages to the client
         response.setContentType("application/json;");
         response.getWriter().println(json);
 
@@ -63,24 +64,25 @@ public class DataServlet extends HttpServlet {
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //Get the user input from the comment form
+      
+        // Get the user input from the comment form
         String userName = request.getParameter("name");
         String userComment = request.getParameter("comment");
 
-        //Place in temporary hashtable
+        // Place in temporary hashtable
         Hashtable<String,String>  messages = new Hashtable<String, String>();
         messages.put(userName, userComment);
 
-        //Defines datastore variables that are connected to user input
+        // Defines datastore variables that are connected to user input
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("name", userName);
         commentEntity.setProperty("comment", userComment);
 
-        //Adds the data to the permanent datastore
+        // Adds the data to the permanent datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentEntity);
 
-        //Brings the user back to the home page
+        // Brings the user back to the home page
         response.sendRedirect("/index.html");
   }
 }
