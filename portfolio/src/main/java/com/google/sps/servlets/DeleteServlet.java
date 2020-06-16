@@ -17,23 +17,14 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-<<<<<<< HEAD
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-=======
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
->>>>>>> 9801af23025744fece03b376277483372065e5da
 import com.google.gson.Gson;
 import com.google.gson.Gson;
 import java.io.IOException;
-<<<<<<< HEAD
-import java.util.ArrayList;
-=======
->>>>>>> 9801af23025744fece03b376277483372065e5da
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,17 +51,5 @@ public class DeleteServlet extends HttpServlet {
             Key commentEntityKey = KeyFactory.createKey("Task", id);
             datastore.delete(commentEntityKey);
         }
-
-        String json = convertToJsonUsingGson(delmessages);
-
-    //This is very important because it sends the messages to the client
-        response.setContentType("application/json;");
-        response.getWriter().println(json);
-    }
-
-    private String convertToJsonUsingGson(ArrayList<String> data){
-        Gson gson = new Gson();
-        String json = gson.toJson(data);
-        return json;
     }
 }

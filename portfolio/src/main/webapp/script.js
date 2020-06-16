@@ -38,16 +38,16 @@ function addDonation() {
 
 /**Fetch and display comments based on quantity input*/
 function getUserComments() {
-    //Gets the user comments stored in datastore but I need help with this
+
+    // Gets the user comments stored in datastore but I need help with this
     var quantity = document.getElementById('quantity');
     var limit = quantity.value;
 
     fetch('/data?quantity=' + limit).then(response => response.json()).then((messages) => {
         
-        //This message appears so the data was fetched
+        // This message appears so the data was fetched
         console.log(messages.length);
 
-        //I'm not sure how to display the comments.
         comments = document.getElementById('comment-container');
         var comments_display = "";
 
