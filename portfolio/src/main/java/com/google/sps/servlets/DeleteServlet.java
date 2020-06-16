@@ -17,28 +17,39 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
+import com.google.gson.Gson;
 import java.io.IOException;
-import java.lang.Integer;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data. I have to redo everything from step 5*/
+/** Servlet that deletes comments from the datastore*/
 @WebServlet("/delete-data")
+
 public class DeleteServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        /** I'm a little lost on this
+        if (request.getParameter("quantity") == null) {
+            Integer quantity = 5;
+        }
+
+        Query query = new Query("Comment");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Entity commentEntity = new Entity("Comment");
-        commentKey = commentEntity.getKey();
-        datastore.delete(commentKey);*/
+        PreparedQuery results = datastore.prepare(query);
+        Integer quantity = Integer.parseInt(request.getParameter("quantity"));
+
+        for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(quantity))) {
+            long id = Long.parseLong(request.getParameter("id"));
+            Key commentEntityKey = KeyFactory.createKey("Task", id);
+            datastore.delete(commentEntityKey);
+        }
     }
 }
