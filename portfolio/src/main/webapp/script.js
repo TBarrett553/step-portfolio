@@ -32,3 +32,38 @@ function addDonation() {
   const donationContainer = document.getElementById('donate-container');
   donationContainer.innerHTML = donation;
 }
+
+/**Fetch and display comments based on quantity input*/
+function getUserComments() {
+
+    // Gets the user comments stored in datastore but I need help with this
+    var quantity = document.getElementById('quantity');
+    var limit = quantity.value;
+
+    fetch('/data?quantity=' + limit).then(response => response.json()).then((messages) => {
+        
+        // This message appears so the data was fetched
+        console.log(messages.length);
+
+        comments = document.getElementById('comment-container');
+        var comments_display = "";
+
+        var counter;
+        for (counter = 0; counter < messages.length; counter++){
+            comments_display += messages[counter] + "<br>";    
+        }
+        comments.innerHTML = comments_display;
+    });
+}
+
+/**Delete the comments displayed from the datastore and UI*/
+function deleteComments() {
+    var quantity = document.getElementById('quantity');
+    var limit = quantity.value;
+
+    const request = new Request('/delete-data?quantity=' + limit);
+    comments = document.getElementById('comment-container');
+
+    comments.innerHTML = "";
+    console.log("messages gone")
+}
