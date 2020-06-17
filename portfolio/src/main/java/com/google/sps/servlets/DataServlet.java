@@ -33,13 +33,13 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that gets and stores user comment data.*/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-
+    
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // If the quantity is null it will be covered by the default qaunity. Null values will happen when the user leave the quantity input blank. 
-        int defaultQuantity = 5;
-        Integer quantity = request.getParameter("quantity") != null ? Integer.parseInt(request.getParameter("quantity")) : defaultQuantity;
+        final int DEFAULT_QUANTITY = 5;
+        Integer quantity = request.getParameter("quantity") != null ? Integer.parseInt(request.getParameter("quantity")) : DEFAULT_QUANTITY;
    
         Query query = new Query("Comment");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
