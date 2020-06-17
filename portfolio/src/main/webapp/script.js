@@ -76,7 +76,7 @@ function drawChart() {
   const data = new google.visualization.DataTable();
   data.addColumn('string', 'Result');
   data.addColumn('number', 'Percent');
-        data.addRows([
+  data.addRows([
           ['No Charges', 347],
           ['Charged', 3],
           ['Convicted', 1]
