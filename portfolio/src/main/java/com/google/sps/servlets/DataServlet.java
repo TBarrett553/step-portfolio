@@ -37,11 +37,7 @@ public class DataServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        //Check if the quantity is null. This usually happens when the user leave the quantity input blank
-
-        if (request.getParameter("quantity") == null) {
-            Integer quantity = 5;
-        }
+        // If the quantity is null it will be covered. Null values will happen when the user leave the quantity input blank. 
 
         Integer quantity = Integer.parseInt(request.getParameter("quantity"));
 
