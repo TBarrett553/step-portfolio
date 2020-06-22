@@ -38,12 +38,11 @@ public class DataServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         //Check if the quantity is null. This usually happens when the user leave the quantity input blank
+        final int DEFAULT_QUANTITY = 5;
+        Integer quantity = request.getParameter("quantity") != null ? Integer.parseInt(request.getParameter("quantity")) : DEFAULT_QUANTITY;
+   
 
-        if (request.getParameter("quantity") == null) {
-            Integer quantity = 5;
-        }
-
-        Integer quantity = Integer.parseInt(request.getParameter("quantity"));
+        //Integer quantity = Integer.parseInt(request.getParameter("quantity"));
 
         Query query = new Query("Comment");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
