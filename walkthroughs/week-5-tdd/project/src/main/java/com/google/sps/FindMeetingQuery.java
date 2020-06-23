@@ -76,34 +76,33 @@ public final class FindMeetingQuery {
         availTimes.add(TimeRange.WHOLE_DAY);
         return availTimes;
 
-    } else {
+    }
     // Even though previous() is not used ListIterator must be used with iterating through ArrayList
-        TimeRange prevBookedTime = null;
-        for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();) {
-            TimeRange bookedTime = bookIterator.next();
+    TimeRange prevBookedTime = null;
+    for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();) {
+        TimeRange bookedTime = bookIterator.next();
             
-            if(prevBookedTime != null) { 
-                if(!bookedTime.overlaps(prevBookedTime) && prevBookedTime.end() + length <= bookedTime.start()) {
-                    availTimes.add(bookedTime.fromStartEnd(prevBookedTime.end(), bookedTime.start(), false));
+        if(prevBookedTime != null) { 
+            if(!bookedTime.overlaps(prevBookedTime) && prevBookedTime.end() + length <= bookedTime.start()) {
+                availTimes.add(bookedTime.fromStartEnd(prevBookedTime.end(), bookedTime.start(), false));
 
-                    if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY) {
-                        availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
-                    }
-                } else if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY) {
-                    availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
-                } else if (prevBookedTime.contains(bookedTime) && prevBookedTime.contains(bookedTime.end())){
-                    availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
-                } 
-            } else if(bookedTime.start() - length >= TimeRange.START_OF_DAY) {
-                availTimes.add(bookedTime.fromStartEnd(TimeRange.START_OF_DAY, bookedTime.start(), false));   
-                if(!bookIterator.hasNext()) {
+                if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY) {
                     availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
                 }
+            } else if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY) {
+                availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
+            } else if (prevBookedTime.contains(bookedTime) && prevBookedTime.contains(bookedTime.end())){
+                availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
+            } 
+        } else if(bookedTime.start() - length >= TimeRange.START_OF_DAY) {
+            availTimes.add(bookedTime.fromStartEnd(TimeRange.START_OF_DAY, bookedTime.start(), false));   
+            if(!bookIterator.hasNext()) {
+                availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
             }
-            prevBookedTime = bookedTime;
         }
-    }
-
+        prevBookedTime = bookedTime;
+        }
+    
     Collections.sort(availTimes, TimeRange.ORDER_BY_START);
     return availTimes;
   }
