@@ -70,9 +70,10 @@ public final class FindMeetingQuery {
     // There is a test that doesn't allow a duration longer than the day. The proper result is to return an empty list
     if(length > TimeRange.END_OF_DAY) {
         return availTimes;
-
+      
+    }
     // If there are no Time Conflicts the whole day should be returned as available
-    } else if (bookTimes.isEmpty()) {
+    if (bookTimes.isEmpty()) {
         availTimes.add(TimeRange.WHOLE_DAY);
         return availTimes;
 
