@@ -17,6 +17,7 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
@@ -29,14 +30,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data. I have to redo everything from step 5*/
+/** Servlet that gets and stores user comment data.*/
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-
+    
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer quantity = Integer.parseInt(request.getParameter("quantity"));
 
+        // If the quantity is null it will be covered by the default qaunity. Null values will happen when the user leave the quantity input blank. 
+        final int DEFAULT_QUANTITY = 5;
+        Integer quantity = request.getParameter("quantity") != null ? Integer.parseInt(request.getParameter("quantity")) : DEFAULT_QUANTITY;
+   
         Query query = new Query("Comment");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -44,7 +48,6 @@ public class DataServlet extends HttpServlet {
         ArrayList<String> storedmessages = new ArrayList<String>();
         for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(quantity))) {
             String userComment = (String) entity.getProperty("comment");
-            
             storedmessages.add(userComment);
         }
         
@@ -54,7 +57,6 @@ public class DataServlet extends HttpServlet {
     // This is very important because it sends the messages to the client
         response.setContentType("application/json;");
         response.getWriter().println(json);
-
     }
 
     private String convertToJsonUsingGson(ArrayList<String> data){
@@ -64,19 +66,18 @@ public class DataServlet extends HttpServlet {
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      
         // Get the user input from the comment form
-        String userName = request.getParameter("name");
-        String userComment = request.getParameter("comment");
+        String name = request.getParameter("name");
+        String comment = request.getParameter("comment");
 
         // Place in temporary hashtable
         Hashtable<String,String>  messages = new Hashtable<String, String>();
-        messages.put(userName, userComment);
+        messages.put(name, comment);
 
         // Defines datastore variables that are connected to user input
         Entity commentEntity = new Entity("Comment");
-        commentEntity.setProperty("name", userName);
-        commentEntity.setProperty("comment", userComment);
+        commentEntity.setProperty("name", name);
+        commentEntity.setProperty("comment", comment);
 
         // Adds the data to the permanent datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
