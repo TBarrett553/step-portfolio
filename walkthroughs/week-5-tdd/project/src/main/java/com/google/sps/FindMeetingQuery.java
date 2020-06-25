@@ -19,9 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -35,10 +33,10 @@ public final class FindMeetingQuery {
     // Creates a List of relevant events that will restrict available time ranges
     bookTimes = findTimeConflicts(requestAttendees, events);
 
-    // Sorts time conflict in chronological order runs the available function
-    Collections.sort(bookTimes, TimeRange.ORDER_BY_START);
+    // Collapse overlaping relevant events into one Time Range
+    ArrayList<TimeRange> collapsedBookTimes = collapseTimeConflicts(bookTimes);
   
-    return getAvailableTimeRanges(bookTimes, length);
+    return getAvailableTimeRanges(collapsedBookTimes, length);
   }
 
 /**Create an ArrayList of relevant events that will restrict available time ranges */
@@ -49,7 +47,7 @@ public final class FindMeetingQuery {
     // Iterates thorugh each event and decides if the TimeRange is relevant based on requestAttendees
     for (Iterator<Event> eventIterator = events.iterator(); eventIterator.hasNext();){
         Event event = eventIterator.next();
-      
+        
         for (Iterator<String> attendIterator = requestAttendees.iterator(); attendIterator.hasNext();){
             String attendee = attendIterator.next();
            
@@ -59,9 +57,32 @@ public final class FindMeetingQuery {
         }
     }
 
-    // The times have to be returned as a list to be sorted by start time
-    ArrayList<TimeRange> bookedTimes = new ArrayList<TimeRange>(bookTimes) ; 
-    return bookedTimes;
+    // The times have to be returned as a list to be sorted by start time 
+    return new ArrayList(bookTimes);
+  }
+
+  public ArrayList<TimeRange> collapseTimeConflicts (ArrayList<TimeRange> bookTimes){
+        // Sorts time conflicts in chronological order
+        Collections.sort(bookTimes, TimeRange.ORDER_BY_START);
+
+        TimeRange prevBookedTime = null;
+        for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();){
+            TimeRange bookedTime = bookIterator.next();
+            if(prevBookedTime != null){
+                // For nested events remove the inner event and keep the longer event Time Range
+                if(prevBookedTime.contains(bookedTime)){
+                    bookTimes.remove(bookedTime); 
+
+                // For overlapping events create a new Time Range with the earliest start time and latest end time
+                } else if(prevBookedTime.overlaps(bookedTime)){
+                    bookTimes.add(bookedTime.fromStartEnd(prevBookedTime.start(), bookedTime.end(), false));
+                    bookTimes.remove(prevBookedTime);
+                    bookTimes.remove(bookedTime); 
+                }
+            }
+            prevBookedTime = bookedTime;
+        }
+        return bookTimes;
   }
 
   public Collection<TimeRange> getAvailableTimeRanges(ArrayList<TimeRange> bookTimes, int length){
@@ -70,8 +91,8 @@ public final class FindMeetingQuery {
     // There is a test that doesn't allow a duration longer than the day. The proper result is to return an empty list
     if(length > TimeRange.END_OF_DAY) {
         return availTimes;
-      
-    }
+
+    } 
     // If there are no Time Conflicts the whole day should be returned as available
     if (bookTimes.isEmpty()) {
         availTimes.add(TimeRange.WHOLE_DAY);
@@ -82,28 +103,25 @@ public final class FindMeetingQuery {
     TimeRange prevBookedTime = null;
     for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();) {
         TimeRange bookedTime = bookIterator.next();
-            
-        if(prevBookedTime != null) { 
-            if(!bookedTime.overlaps(prevBookedTime) && prevBookedTime.end() + length <= bookedTime.start()) {
-                availTimes.add(bookedTime.fromStartEnd(prevBookedTime.end(), bookedTime.start(), false));
 
-                if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY) {
-                    availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
-                }
-            } else if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY) {
-                availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
-            } else if (prevBookedTime.contains(bookedTime) && prevBookedTime.contains(bookedTime.end())){
-                availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
-            } 
-        } else if(bookedTime.start() - length >= TimeRange.START_OF_DAY) {
-            availTimes.add(bookedTime.fromStartEnd(TimeRange.START_OF_DAY, bookedTime.start(), false));   
-            if(!bookIterator.hasNext()) {
-                availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
+        /** For the last event, if there is enough room the available time can last to the end of the day. 
+        This doesn't depend on the value of prevBookedTime.*/
+        if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY ) {
+            availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
+        } 
+
+        if(prevBookedTime != null) { 
+            // Determines if a gap between meetings can fit a meeting request
+            if(prevBookedTime.end() + length <= bookedTime.start()) {
+                availTimes.add(bookedTime.fromStartEnd(prevBookedTime.end(), bookedTime.start(), false));
             }
+        // If there isn't a previous event and the request duration fits, time is available until the start of the day
+        }else if(bookedTime.start() - length >= TimeRange.START_OF_DAY) {
+            availTimes.add(bookedTime.fromStartEnd(TimeRange.START_OF_DAY, bookedTime.start(), false)); 
         }
         prevBookedTime = bookedTime;
-        }
-    
+    }
+
     Collections.sort(availTimes, TimeRange.ORDER_BY_START);
     return availTimes;
   }
