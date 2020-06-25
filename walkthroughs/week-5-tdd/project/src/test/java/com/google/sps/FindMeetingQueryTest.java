@@ -394,8 +394,7 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void optionalAttendeesWithoutGaps() {
-    // There are two optional meeting attendees. They have several gaps in their schedule that 
-    // will be returned.
+    // There are two optional meeting attendees. There are no gaps their schedule and no time ranges will be returned
     //
     // OPtEvent: |-----A----||----B----|
     // Day     : |---------------------|
