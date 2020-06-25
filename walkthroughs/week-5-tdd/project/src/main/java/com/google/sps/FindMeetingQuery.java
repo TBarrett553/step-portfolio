@@ -69,7 +69,7 @@ public final class FindMeetingQuery {
         for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();){
             TimeRange bookedTime = bookIterator.next();
             if(prevBookedTime != null){
-                // For nested events remove the inner event and keep the longer event Time Range
+                // When bookedTime is fully contained in the previous event, keep the longer event's Time Range
                 if(prevBookedTime.contains(bookedTime)){
                     bookTimes.remove(bookedTime); 
 
