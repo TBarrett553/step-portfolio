@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.List;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -34,9 +35,9 @@ public final class FindMeetingQuery {
     bookTimes = findTimeConflicts(requestAttendees, events);
 
     // Collapse overlaping relevant events into one Time Range
-    ArrayList<TimeRange> collapsedBookTimes = collapseTimeConflicts(bookTimes);
+    collapseTimeConflicts(bookTimes);
   
-    return getAvailableTimeRanges(collapsedBookTimes, length);
+    return getAvailableTimeRanges(bookTimes, length);
   }
 
 /**Create an ArrayList of relevant events that will restrict available time ranges */
@@ -61,7 +62,8 @@ public final class FindMeetingQuery {
     return new ArrayList(bookTimes);
   }
 
-  public ArrayList<TimeRange> collapseTimeConflicts (ArrayList<TimeRange> bookTimes){
+/** Iterates through an existing list of booked times and collapses overlapping TimeRanges in to one encompassing TimeRange*/
+  public void collapseTimeConflicts (List<TimeRange> bookTimes){
         // Sorts time conflicts in chronological order
         Collections.sort(bookTimes, TimeRange.ORDER_BY_START);
 
@@ -69,7 +71,7 @@ public final class FindMeetingQuery {
         for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();){
             TimeRange bookedTime = bookIterator.next();
             if(prevBookedTime != null){
-                // When bookedTime is fully contained in the previous event, keep the longer event's Time Range
+                // For nested events remove the inner event and keep the longer event Time Range
                 if(prevBookedTime.contains(bookedTime)){
                     bookTimes.remove(bookedTime); 
 
@@ -82,7 +84,6 @@ public final class FindMeetingQuery {
             }
             prevBookedTime = bookedTime;
         }
-        return bookTimes;
   }
 
   public Collection<TimeRange> getAvailableTimeRanges(ArrayList<TimeRange> bookTimes, int length){
