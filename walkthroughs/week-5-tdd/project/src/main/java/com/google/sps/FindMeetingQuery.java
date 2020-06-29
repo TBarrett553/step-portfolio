@@ -14,10 +14,116 @@
 
 package com.google.sps;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.List;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+
+    // Initiatizes return data structure and set duration parameter
+    //Collection<TimeRange> availTimes = new HashSet<>();
+    ArrayList<TimeRange> bookTimes = new ArrayList<TimeRange>();
+    final int length = (int) request.getDuration();
+    Collection<String>  requestAttendees = request.getAttendees();
+    
+    // Creates a List of relevant events that will restrict available time ranges
+    bookTimes = findTimeConflicts(requestAttendees, events);
+
+    // Collapse overlaping relevant events into one Time Range
+    collapseTimeConflicts(bookTimes);
+  
+    return getAvailableTimeRanges(bookTimes, length);
+  }
+
+/**Create an ArrayList of relevant events that will restrict available time ranges */
+  public ArrayList<TimeRange> findTimeConflicts(Collection<String> requestAttendees, Collection<Event> events){
+    // Set doesn't store duplicates and makes the for loop below more efficient
+    HashSet<TimeRange> bookTimes = new HashSet<TimeRange>();
+
+    // Iterates thorugh each event and decides if the TimeRange is relevant based on requestAttendees
+    for (Iterator<Event> eventIterator = events.iterator(); eventIterator.hasNext();){
+        Event event = eventIterator.next();
+        
+        for (Iterator<String> attendIterator = requestAttendees.iterator(); attendIterator.hasNext();){
+            String attendee = attendIterator.next();
+           
+            if(event.getAttendees().contains(attendee)){
+                bookTimes.add(event.getWhen());
+            }
+        }
+    }
+
+    // The times have to be returned as a list to be sorted by start time 
+    return new ArrayList(bookTimes);
+  }
+
+/** Iterates through an existing list of booked times and collapses overlapping TimeRanges in to one encompassing TimeRange*/
+  public void collapseTimeConflicts (List<TimeRange> bookTimes){
+        // Sorts time conflicts in chronological order
+        Collections.sort(bookTimes, TimeRange.ORDER_BY_START);
+
+        TimeRange prevBookedTime = null;
+        for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();){
+            TimeRange bookedTime = bookIterator.next();
+            if(prevBookedTime != null){
+                // For nested events remove the inner event and keep the longer event Time Range
+                if(prevBookedTime.contains(bookedTime)){
+                    bookTimes.remove(bookedTime); 
+
+                // For overlapping events create a new Time Range with the earliest start time and latest end time
+                } else if(prevBookedTime.overlaps(bookedTime)){
+                    bookTimes.add(bookedTime.fromStartEnd(prevBookedTime.start(), bookedTime.end(), false));
+                    bookTimes.remove(prevBookedTime);
+                    bookTimes.remove(bookedTime); 
+                }
+            }
+            prevBookedTime = bookedTime;
+        }
+  }
+
+  public Collection<TimeRange> getAvailableTimeRanges(ArrayList<TimeRange> bookTimes, int length){
+    ArrayList<TimeRange> availTimes = new ArrayList<TimeRange>();
+
+    // There is a test that doesn't allow a duration longer than the day. The proper result is to return an empty list
+    if(length > TimeRange.END_OF_DAY) {
+        return availTimes;
+
+    } 
+    // If there are no Time Conflicts the whole day should be returned as available
+    if (bookTimes.isEmpty()) {
+        availTimes.add(TimeRange.WHOLE_DAY);
+        return availTimes;
+
+    }
+    // Even though previous() is not used ListIterator must be used with iterating through ArrayList
+    TimeRange prevBookedTime = null;
+    for(ListIterator<TimeRange> bookIterator = bookTimes.listIterator(); bookIterator.hasNext();) {
+        TimeRange bookedTime = bookIterator.next();
+
+        /** For the last event, if there is enough room the available time can last to the end of the day. 
+        This doesn't depend on the value of prevBookedTime.*/
+        if(!bookIterator.hasNext() && bookedTime.end() + length <= TimeRange.END_OF_DAY ) {
+            availTimes.add(bookedTime.fromStartEnd(bookedTime.end(), TimeRange.END_OF_DAY, true));
+        } 
+
+        if(prevBookedTime != null) { 
+            // Determines if a gap between meetings can fit a meeting request
+            if(prevBookedTime.end() + length <= bookedTime.start()) {
+                availTimes.add(bookedTime.fromStartEnd(prevBookedTime.end(), bookedTime.start(), false));
+            }
+        // If there isn't a previous event and the request duration fits, time is available until the start of the day
+        }else if(bookedTime.start() - length >= TimeRange.START_OF_DAY) {
+            availTimes.add(bookedTime.fromStartEnd(TimeRange.START_OF_DAY, bookedTime.start(), false)); 
+        }
+        prevBookedTime = bookedTime;
+    }
+
+    Collections.sort(availTimes, TimeRange.ORDER_BY_START);
+    return availTimes;
   }
 }

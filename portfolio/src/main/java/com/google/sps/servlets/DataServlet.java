@@ -36,7 +36,6 @@ public class DataServlet extends HttpServlet {
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         // If the quantity is null it will be covered by the default qaunity. Null values will happen when the user leave the quantity input blank. 
         final int DEFAULT_QUANTITY = 5;
         Integer quantity = request.getParameter("quantity") != null ? Integer.parseInt(request.getParameter("quantity")) : DEFAULT_QUANTITY;
